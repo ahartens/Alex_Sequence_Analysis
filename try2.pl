@@ -27,8 +27,10 @@ my $seq;
 my $sequence;
 my $seq_length;
 my $fail;
+my $skip;
 my $const_frame_leader_all;
 my $const_frame_leader_all_revcomp;
+my $conserved_region_sequence;
 
 my $const_frame_constant_gamma;
 my $const_frame_constant_kappa;
@@ -77,6 +79,7 @@ foreach $file (@files) {
 		if ($line =~ /^>/) {
 			$file_count++;
 			chomp($line);
+			print "$line\n";
 			push (@headers, $line);
 			
 			if(defined($seq)) {
@@ -93,7 +96,8 @@ foreach $file (@files) {
 	$seq_length = length($sequence);
 	push (@seq_lengths, $seq_length);
 	push (@sequences, $sequence);
-	insert_id($sequence, $const_frame_leader_all, $const_frame_leader_all_revcomp, $constant_vector_gamma, $constant_vector_kappa, $constant_vector_lamda, $const_frame_constant_gamma, $const_frame_constant_kappa, $const_frame_constant_lamda);	
+	my ($global, $conserved_region_sequence) = insert_id($sequence, $const_frame_leader_all, $const_frame_leader_all_revcomp, $constant_vector_gamma, $constant_vector_kappa, $constant_vector_lamda, $const_frame_constant_gamma, $const_frame_constant_kappa, $const_frame_constant_lamda);	
+	calculate_frame_shift($sequence, $global, $conserved_region_sequence);
 	close (FILE);
 }
 
@@ -101,16 +105,16 @@ foreach $file (@files) {
 
 
 #print array of data
-my $x = 0;
-for ($x= 0; $x<$file_count+1; $x++){
-	print "$headers[$x] \t $id[$x] \t $seq_lengths[$x] \t $length_inserts[$x] \t $frame_shift[$x] \n"
-}
+#my $x = 0;
+#for ($x= 0; $x<$file_count+1; $x++){
+#	print "$headers[$x] \t $id[$x] \t $seq_lengths[$x] \t $length_inserts[$x] \t $frame_shift[$x] \n"
+#}
 
-my $x = 0;
-for ($x= 0; $x<$file_count+1; $x++){
-open FILE, ">>output.csv";
-print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $frame_shift[$x]\n ";
-}
+#my $x = 0;
+#for ($x= 0; $x<$file_count+1; $x++){
+#open FILE, ">>output.csv";
+#print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $frame_shift[$x]\n ";
+#}
 
 
 
@@ -127,42 +131,23 @@ sub insert_id {
 	if ($seq =~ /$global/){
 		if ($seq =~ /$id_gamma/){
 			push (@id, $gamma);
-			$end = $conserved_gamma;
-			$seq =~ /$start(.+)$end/;
-			push (@inserts, $1);
-			$length_insert = length ($1);
-			push (@length_inserts, $length_insert);
-			calculate_frame_shift($length_insert)
+			return ($global, $conserved_gamma);
 		}
 		elsif ($seq =~ /$id_kappa/){
 			push (@id, $kappa);
-			$end = $conserved_kappa;
-			$seq =~ /$start(.+)$end/;
-			push (@inserts, $1);
-			$length_insert = length ($1);
-			push (@length_inserts, $length_insert);
-			calculate_frame_shift($length_insert);
+			return ($global, $conserved_kappa);
 		}
 		else {
 			push (@id, $lamda);
-			$end = $conserved_lamda;
-			$seq =~ /$start(.+)$end/;
-			push (@inserts, $1);
-			$length_insert = length ($1);
-			push (@length_inserts, $length_insert);
-			calculate_frame_shift($length_insert);
+			return ($global, $conserved_lamda);
 		}
 	}
-	else {
-		if ($seq =~ /$global_revcomp/){
-			print "reverse it\n";
+	elsif ($seq =~ /$global_revcomp/){
+			return ($global_revcomp, $conserved_lamda);
 		}
-		else{
+	else{
 			push(@id, $fail);
-			push(@inserts, $fail);
-			push(@length_inserts, $fail);
-			push(@frame_shift, $fail);
-		}
+			return($fail, $fail);
 	}
 }
 
@@ -171,10 +156,25 @@ sub insert_id {
 
 
 sub calculate_frame_shift{
+	my ($seq, $start, $end) = @_;
+	my $fail = "--";
 	my $result;
-	my ($value)= @_;
-	my $x= $value / 3 ;
-		if ($x =~ /\d\.(\d*)/) {
+	my $value;
+	if ( $start =~ $fail){
+		push(@inserts, $fail);
+		push(@length_inserts, $fail);
+		push(@frame_shift, $fail);
+	}
+	else {
+		#print "$seq \n $start \t $end \n\n";
+			
+		$seq =~ /$start(.+)$end/;
+			push (@inserts, $1);
+		$length_insert = length ($1);
+			push (@length_inserts, $length_insert);
+		print "$length_insert\n";
+		my $value= $length_insert / 3 ;
+		if ($value =~ /\d\.(\d*)/) {
 			if ($1 =~ /3+/){
 				$result= 1;
 				push (@frame_shift, $result);
@@ -188,6 +188,10 @@ sub calculate_frame_shift{
 			$result = 0;
 			push (@frame_shift, $result);
 		}
+	
+		}
+	
+	
 }
 
 
