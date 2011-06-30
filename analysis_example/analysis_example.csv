@@ -1,0 +1,9 @@
+filename,constant,ori,leader,constant,insert length,frame,stops
+B2LPA+h004-1_Absense,gamma,1,TRUE,TRUE,358,1
+B2LPA+h012-3_Absense,gamma,1,TRUE,TRUE,369,0,FALSE
+B2LPA+h017-1_Absense,gamma,1,TRUE,TRUE,389,2
+B2LPA+h019-2_Absense,gamma,1,TRUE,TRUE,360,0,TRUE
+B2LPA+k002-1_Absense,kappa,1,TRUE,TRUE,333,0,FALSE
+B2LPA+k004-2_Absense,kappa,1,TRUE,TRUE,333,0,FALSE
+B3PCB1l221-1_Absense,lambda,1,TRUE,TRUE,402,0,FALSE
+B3PCB1l331-1_Absense,lambda,1,TRUE,TRUE,384,0,FALSE
