@@ -126,21 +126,15 @@ sub insert_id {
 		if ($seq =~ /$id_gamma/){
 			push (@id, $gamma);
 			$end = $conserved_gamma;
-						print "$start\n $end\n\n\n";
-
 			$seq =~ /$start(.+)$end/;
 			push (@inserts, $1);
-			
 			$length_insert = length ($1);
 			push (@length_inserts, $length_insert);
 			calculate_frame_shift($length_insert)
 		}
 		elsif ($seq =~ /$id_kappa/){
 			push (@id, $kappa);
-
 			$end = $conserved_kappa;
-									print "$start\n $end\n\n\n";
-
 			$seq =~ /$start(.+)$end/;
 			push (@inserts, $1);
 			$length_insert = length ($1);
@@ -149,10 +143,7 @@ sub insert_id {
 		}
 		else {
 			push (@id, $lamda);
-
 			$end = $conserved_lamda;
-									print "$start\n $end\n\n\n";
-
 			$seq =~ /$start(.+)$end/;
 			push (@inserts, $1);
 			$length_insert = length ($1);
