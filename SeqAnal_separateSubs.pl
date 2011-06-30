@@ -1,5 +1,5 @@
 #! usr/bin/perl
-## something is seriously wrong....
+
 
 use strict;
 
@@ -77,10 +77,9 @@ foreach $file (@files) {
 			chomp($line);
 			push (@headers, $line);
 			
-			if(defined($sequence)) {
+			if(defined($seq)) {
 			
-				$sequence = "";
-				$1 = "";
+				$seq = "";
 			}		
 		}
 		else {
@@ -108,7 +107,7 @@ for ($x= 0; $x<$file_count+1; $x++){
 my $x = 0;
 for ($x= 0; $x<$file_count+1; $x++){
 open FILE, ">>output.csv";
-print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $inserts[$x], $frame_shift[$x]\n ";
+print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $frame_shift[$x]\n ";
 }
 
 
@@ -121,21 +120,27 @@ sub insert_id {
 	my $kappa = "kappa";
 	my $lamda = "lamda";
 	my $fail = "not a sequence";
-	my $start = "aa";
+	my $start = $global;
 	my $end;
 	if ($seq =~ /$global/){
 		if ($seq =~ /$id_gamma/){
 			push (@id, $gamma);
 			$end = $conserved_gamma;
+						print "$start\n $end\n\n\n";
+
 			$seq =~ /$start(.+)$end/;
 			push (@inserts, $1);
+			
 			$length_insert = length ($1);
 			push (@length_inserts, $length_insert);
 			calculate_frame_shift($length_insert)
 		}
 		elsif ($seq =~ /$id_kappa/){
 			push (@id, $kappa);
+
 			$end = $conserved_kappa;
+									print "$start\n $end\n\n\n";
+
 			$seq =~ /$start(.+)$end/;
 			push (@inserts, $1);
 			$length_insert = length ($1);
@@ -144,7 +149,10 @@ sub insert_id {
 		}
 		else {
 			push (@id, $lamda);
+
 			$end = $conserved_lamda;
+									print "$start\n $end\n\n\n";
+
 			$seq =~ /$start(.+)$end/;
 			push (@inserts, $1);
 			$length_insert = length ($1);
