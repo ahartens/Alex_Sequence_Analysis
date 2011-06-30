@@ -26,8 +26,9 @@ my $file_name;
 my $seq;
 my $sequence;
 my $seq_length;
-
+my $fail;
 my $const_frame_leader_all;
+my $const_frame_leader_all_revcomp;
 
 my $const_frame_constant_gamma;
 my $const_frame_constant_kappa;
@@ -42,6 +43,7 @@ my $constant_vector_lamda;
 
 # Vector sequence used for assessment of reading-frame. common leader fragment of all vectors, includes AgeI site
 $const_frame_leader_all = "ctagtagcaactgcaaccggt"; 
+$const_frame_leader_all_revcomp = "accggttgcagttgctactag";
 
 # Vector sequences used for assessment of reading-frame
 $const_frame_constant_gamma = "..gtcgaccaagggcccatc"; # Cheavy (hIgG1)
@@ -91,7 +93,7 @@ foreach $file (@files) {
 	$seq_length = length($sequence);
 	push (@seq_lengths, $seq_length);
 	push (@sequences, $sequence);
-	my ($seq, $conserved_region_sequence) = insert_id($sequence, $const_frame_leader_all, $constant_vector_gamma, $constant_vector_kappa, $constant_vector_lamda, $const_frame_constant_gamma, $const_frame_constant_kappa, $const_frame_constant_lamda);	
+	my ($seq, $conserved_region_sequence) = insert_id($sequence, $const_frame_leader_all, $const_frame_leader_all_revcomp, $constant_vector_gamma, $constant_vector_kappa, $constant_vector_lamda, $const_frame_constant_gamma, $const_frame_constant_kappa, $const_frame_constant_lamda);	
 	close (FILE);
 }
 
@@ -115,11 +117,11 @@ print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $frame_
 
 
 sub insert_id {
-	my($seq, $global, $id_gamma, $id_kappa, $id_lamda, $conserved_gamma, $conserved_kappa, $conserved_lamda)= @_;
+	my($seq, $global, $global_revcomp, $id_gamma, $id_kappa, $id_lamda, $conserved_gamma, $conserved_kappa, $conserved_lamda)= @_;
 	my $gamma = "gamma";
 	my $kappa = "kappa";
 	my $lamda = "lamda";
-	my $fail = "not a sequence";
+	my $fail = "--";
 	my $start = $global;
 	my $end;
 	if ($seq =~ /$global/){
@@ -152,10 +154,15 @@ sub insert_id {
 		}
 	}
 	else {
+		if ($seq =~ /$global_revcomp/){
+			print "reverse it\n";
+			}
+		else{
 		push(@id, $fail);
 		push(@inserts, $fail);
 		push(@length_inserts, $fail);
 		push(@frame_shift, $fail);
+		}
 	}
 }
 
