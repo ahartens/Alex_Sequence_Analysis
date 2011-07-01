@@ -17,6 +17,7 @@ my @seq_lengths;
 
 my $frame;
 my $length_insert;
+#my $fail;
 
 my $file_count;
 my $file;
@@ -41,6 +42,7 @@ my $constant_vector_kappa;
 my $constant_vector_lamda;
 
 
+#	my $fail = "--";
 
 
 # Vector sequence used for assessment of reading-frame. common leader fragment of all vectors, includes AgeI site
@@ -96,8 +98,8 @@ foreach $file (@files) {
 	$seq_length = length($sequence);
 	push (@seq_lengths, $seq_length);
 	push (@sequences, $sequence);
-	my ($global, $conserved_region_sequence) = insert_id($sequence, $const_frame_leader_all, $const_frame_leader_all_revcomp, $constant_vector_gamma, $constant_vector_kappa, $constant_vector_lamda, $const_frame_constant_gamma, $const_frame_constant_kappa, $const_frame_constant_lamda);	
-	calculate_frame_shift($sequence, $global, $conserved_region_sequence);
+	my ($global, $conserved_region_sequence) = insert_id($sequence, $const_frame_leader_all, $const_frame_leader_all_revcomp, $constant_vector_gamma, $constant_vector_kappa, $constant_vector_lamda, $const_frame_constant_gamma, $const_frame_constant_kappa, $const_frame_constant_lamda, $fail);	
+	calculate_frame_shift($sequence, $global, $conserved_region_sequence, $fail);
 	close (FILE);
 }
 
@@ -105,27 +107,26 @@ foreach $file (@files) {
 
 
 #print array of data
-#my $x = 0;
-#for ($x= 0; $x<$file_count+1; $x++){
-#	print "$headers[$x] \t $id[$x] \t $seq_lengths[$x] \t $length_inserts[$x] \t $frame_shift[$x] \n"
-#}
+my $x = 0;
+for ($x= 0; $x<$file_count+1; $x++){
+	print "$headers[$x] \t $id[$x] \t $seq_lengths[$x] \t $length_inserts[$x] \t $frame_shift[$x] \n"
+}
 
-#my $x = 0;
-#for ($x= 0; $x<$file_count+1; $x++){
-#open FILE, ">>output.csv";
-#print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $frame_shift[$x]\n ";
-#}
+my $x = 0;
+for ($x= 0; $x<$file_count+1; $x++){
+open FILE, ">>output.csv";
+print FILE "$file_names[$x], $headers[$x], $id[$x], $length_inserts[$x], $frame_shift[$x]\n ";
+}
 
 
 
 
 
 sub insert_id {
-	my($seq, $global, $global_revcomp, $id_gamma, $id_kappa, $id_lamda, $conserved_gamma, $conserved_kappa, $conserved_lamda)= @_;
+	my($seq, $global, $global_revcomp, $id_gamma, $id_kappa, $id_lamda, $conserved_gamma, $conserved_kappa, $conserved_lamda, $fail)= @_;
 	my $gamma = "gamma";
 	my $kappa = "kappa";
 	my $lamda = "lamda";
-	my $fail = "--";
 	my $start = $global;
 	my $end;
 	if ($seq =~ /$global/){
@@ -146,8 +147,9 @@ sub insert_id {
 			return ($global_revcomp, $conserved_lamda);
 		}
 	else{
+			$fail = "--";
 			push(@id, $fail);
-			return($fail, $fail);
+			return($fail);
 	}
 }
 
@@ -157,10 +159,9 @@ sub insert_id {
 
 sub calculate_frame_shift{
 	my ($seq, $start, $end) = @_;
-	my $fail = "--";
 	my $result;
 	my $value;
-	if ( $start =~ $fail){
+	if ( defined($fail)){
 		push(@inserts, $fail);
 		push(@length_inserts, $fail);
 		push(@frame_shift, $fail);
@@ -191,7 +192,8 @@ sub calculate_frame_shift{
 	
 		}
 	
-	
+		my $fail = "";
+
 }
 
 

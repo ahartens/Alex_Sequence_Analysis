@@ -90,6 +90,7 @@ foreach $file (@files) {
 		}
 	}
 	$sequence= lc($seq);
+	print "$sequence\n";
 	$seq_length = length($sequence);
 	push (@seq_lengths, $seq_length);
 	push (@sequences, $sequence);
