@@ -239,11 +239,7 @@ sub insert_id {
 					push (@length_inserts, $length_insert);
 					calculate_frame_shift($length_insert, $insert)
 			
-			}
-		
-			
-		
-			elsif ($seq =~ /$id_kappa/) {
+			} elsif ($seq =~ /$id_kappa/) {
 					
 					push (@id, $kappa);
 					$end = $conserved_kappa;
@@ -254,11 +250,7 @@ sub insert_id {
 					push (@length_inserts, $length_insert);
 					calculate_frame_shift($length_insert, $insert);
 			
-			}
-		
-		
-			
-			elsif ($seq =~ /$id_lamda/){
+			} elsif ($seq =~ /$id_lamda/){
 					
 					push (@id, $lamda);
 					$end = $conserved_lamda;
@@ -269,9 +261,7 @@ sub insert_id {
 					push (@length_inserts, $length_insert);
 					calculate_frame_shift($length_insert, $insert);
 			
-			}
-		
-			else {
+			} else {
 					
 					push (@id, $fail);
 					push(@inserts, $fail);
